@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>도토리 농장</title>
+    <title>감정의 구슬</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Jua', sans-serif; overflow: hidden; background-color: #d1fae5; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        body { font-family: 'Jua', sans-serif; overflow: hidden; background-color: #fce4ec; display: flex; align-items: center; justify-content: center; height: 100vh; }
         canvas { display: block; }
         .popup-enter { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
@@ -23,44 +23,44 @@
     
     <div class="w-full max-w-sm mx-auto h-full max-h-[95vh] sm:max-h-[800px] flex flex-col">
         <div class="w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col flex-grow min-h-0">
-            <header class="p-3 sm:p-4 bg-emerald-500 text-white text-center rounded-t-3xl flex-shrink-0">
-                <h1 class="text-2xl sm:text-3xl font-bold">도토리 농장</h1>
+            <header class="p-3 sm:p-4 bg-pink-400 text-white text-center rounded-t-3xl flex-shrink-0">
+                <h1 class="text-2xl sm:text-3xl font-bold">감정의 구슬</h1>
                 <div class="flex justify-between items-center mt-1 sm:mt-2 text-sm sm:text-lg">
                     <div>최고점수: <span id="high-score">0</span></div>
                     <div>현재점수: <span id="current-score">0</span></div>
                 </div>
             </header>
-            <div class="bg-emerald-200 p-2 flex items-center justify-center space-x-4 flex-shrink-0">
-                <span class="text-slate-700">다음 물체:</span>
-                <div id="next-item-display" class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white rounded-full shadow-inner">
-                    <span id="next-item-emoji" class="text-2xl sm:text-3xl"></span>
+            <div class="bg-pink-200 p-2 flex items-center justify-center space-x-4 flex-shrink-0">
+                <span class="text-slate-700">다음 감정:</span>
+                <div id="next-emotion-display" class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white rounded-full shadow-inner">
+                    <img id="next-emotion-image" class="w-full h-full object-cover rounded-full" />
                 </div>
             </div>
             <div id="game-container" class="relative flex-grow min-h-0">
                 <div id="game-over-modal" class="hidden absolute inset-0 bg-black bg-opacity-60 flex-col items-center justify-center text-center p-8 z-50 popup-enter">
-                    <!-- Game over content is dynamically added -->
+                    <!-- 게임 오버 내용은 동적으로 채워짐 -->
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Popups -->
+    <!-- 팝업들 -->
     <div id="discovery-popup" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] popup-enter">
-        <div class="bg-gradient-to-br from-lime-200 to-green-300 rounded-3xl p-6 text-center shadow-2xl max-w-sm w-full border-4 border-white">
-            <h2 class="text-3xl font-bold text-green-700 mb-2">✨ 새로운 발견! ✨</h2>
-            <div id="popup-emoji" class="text-8xl my-4 animate-bounce"></div>
+        <div class="bg-gradient-to-br from-purple-200 to-pink-300 rounded-3xl p-6 text-center shadow-2xl max-w-sm w-full border-4 border-white">
+            <h2 class="text-3xl font-bold text-pink-700 mb-2">✨ 새로운 감정 발견! ✨</h2>
+            <img id="popup-image" class="w-32 h-32 my-4 animate-bounce mx-auto rounded-full border-4 border-white shadow-lg" />
             <h3 id="popup-name" class="text-4xl font-bold text-slate-800"></h3>
             <p id="popup-description" class="text-slate-600 mt-2 mb-6 text-lg"></p>
-            <button id="popup-close-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full text-xl shadow-lg">계속하기</button>
+            <button id="popup-close-button" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-8 rounded-full text-xl shadow-lg">계속하기</button>
         </div>
     </div>
     <div id="game-complete-popup" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[100] popup-enter">
-        <div class="bg-gradient-to-br from-lime-300 to-emerald-400 rounded-3xl p-6 text-center shadow-2xl max-w-sm w-full border-4 border-white">
-            <h2 class="text-4xl font-bold text-white mb-2">🎉 도감 완성! 🎉</h2>
-            <div class="text-8xl my-4 animate-bounce">🏠</div>
-            <h3 class="text-3xl font-bold text-white">모든 물체를 완성했어요!</h3>
-            <p class="text-white mt-2 mb-6 text-lg">당신은 최고의 농장 마스터입니다!</p>
-            <button id="complete-popup-close-button" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-full text-xl shadow-lg">계속 도전하기</button>
+        <div class="bg-gradient-to-br from-pink-300 to-red-400 rounded-3xl p-6 text-center shadow-2xl max-w-sm w-full border-4 border-white">
+            <h2 class="text-4xl font-bold text-white mb-2">🎉 감정의 구슬 완성! 🎉</h2>
+            <div class="text-8xl my-4 animate-bounce">💖</div>
+            <h3 class="text-3xl font-bold text-white">모든 감정을 발견했어요!</h3>
+            <p class="text-white mt-2 mb-6 text-lg">당신은 최고의 감정 마스터입니다!</p>
+            <button id="complete-popup-close-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded-full text-xl shadow-lg">계속 도전하기</button>
         </div>
     </div>
 
@@ -71,7 +71,7 @@
 
         const { Engine, Render, Runner, World, Bodies, Common, Events, Body, Composite } = Matter;
 
-        // Firebase Setup
+        // Firebase 설정
         let db, auth;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         
@@ -87,72 +87,68 @@
                     await signInAnonymously(auth);
                 }
                 console.log("Firebase initialized and user signed in.");
-                init(); // Start game after Firebase setup
+                init(); // Firebase 설정 후 게임 시작
             } catch (error) {
-                console.error("Firebase initialization error:", error);
-                // Continue with game initialization even without Firebase
+                console.error("Firebase 초기화 오류:", error);
+                // Firebase 없이도 게임이 실행되도록 init() 호출
                 init();
             }
         }
 
 
-        // --- Rest of the game code ---
+        // --- 나머지 게임 코드 ---
         const gameContainer = document.getElementById('game-container');
         let containerWidth, containerHeight;
         
         const highScoreEl = document.getElementById('high-score');
         const currentScoreEl = document.getElementById('current-score');
-        const nextItemEmojiEl = document.getElementById('next-item-emoji');
+        const nextEmotionImageEl = document.getElementById('next-emotion-image');
         
         const gameOverModal = document.getElementById('game-over-modal');
         const discoveryPopup = document.getElementById('discovery-popup');
-        const popupEmoji = document.getElementById('popup-emoji');
+        const popupImage = document.getElementById('popup-image');
         const popupName = document.getElementById('popup-name');
         const popupDescription = document.getElementById('popup-description');
         const popupCloseButton = document.getElementById('popup-close-button');
         const gameCompletePopup = document.getElementById('game-complete-popup');
         const completePopupCloseButton = document.getElementById('complete-popup-close-button');
 
-        let ITEMS;
-        const MAX_LEVEL = 3;
+        let EMOTIONS;
+        const MAX_LEVEL = 4;
         const MAX_SPAWN_LEVEL = 2;
 
         let engine, render, runner;
         let currentScore = 0;
-        let highScore = localStorage.getItem('acorn-farm-highscore') || 0;
-        let discoveredItems = JSON.parse(localStorage.getItem('discoveredItems')) || [0];
+        let highScore = localStorage.getItem('emotion-highscore') || 0;
+        let discoveredEmotions = JSON.parse(localStorage.getItem('discoveredEmotions')) || [0];
         let isGameOver = false;
-        let currentItem = null;
-        let nextItemInfo = null;
+        let currentEmotion = null;
+        let nextEmotionInfo = null;
         let disableAction = false;
         let isAudioStarted = false;
-        let isFirstItem = true;
+        let isFirstEmotion = true;
         
         let bodiesToRemove = new Set();
         let bodiesToAdd = [];
 
-        // Sound settings
-        const bgmSynth = new Tone.FMSynth({ harmonicity: 1.5, modulationIndex: 10, oscillator: { type: "triangle" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.1 }, modulation: { type: "sawtooth" }, modulationEnvelope: { attack: 0.1, decay: 0.1, sustain: 0.5, release: 0.1 } }).toDestination();
-        bgmSynth.volume.value = -15;
-        const bgmPattern = new Tone.Sequence((time, note) => { bgmSynth.triggerAttackRelease(note, "16n", time); }, ['C2', 'G2', 'C3', 'G2', 'C2', 'D#2', 'C2', 'D#2']).start(0);
-        bgmPattern.loop = true;
-        const melodySynth = new Tone.AMSynth({ envelope: { attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.1 } }).toDestination();
-        melodySynth.volume.value = -10;
-        const melodyPattern = new Tone.Sequence((time, note) => { melodySynth.triggerAttackRelease(note, '8n', time); }, ['G4', 'A#4', 'C5', 'A#4', null, 'G4', 'F4', 'G4']).start("0:2");
-        melodyPattern.loop = true;
-        Tone.Transport.bpm.value = 140;
+        // 사운드 설정
+        const bgmSynth = new Tone.PolySynth(Tone.Synth, { oscillator: { type: "square" } }).toDestination();
+        bgmSynth.volume.value = -20;
+        const bgmNotes = ['C4', 'E4', 'G4', 'C5'];
+        const bgmPattern = new Tone.Pattern((time, note) => { bgmSynth.triggerAttackRelease(note, "8n", time); }, bgmNotes, 'upDown').start(0);
+        Tone.Transport.bpm.value = 120;
         const sfxSynth = new Tone.PolySynth(Tone.Synth).toDestination();
         const dropSound = () => sfxSynth.triggerAttackRelease("C4", "8n");
-        const mergeSound = (level) => sfxSynth.triggerAttackRelease(440 * Math.pow(2, (level - 4) / 12), "8n");
+        const mergeSound = (level) => sfxSynth.triggerAttackRelease(440 * Math.pow(2, (level) / 12), "8n");
         const discoverySound = () => { const now = Tone.now(); sfxSynth.triggerAttackRelease("C5", "8n", now); sfxSynth.triggerAttackRelease("E5", "8n", now + 0.1); sfxSynth.triggerAttackRelease("G5", "8n", now + 0.2); };
         const completeSound = () => { const now = Tone.now(); sfxSynth.triggerAttackRelease("C5", "8n", now); sfxSynth.triggerAttackRelease("G5", "8n", now + 0.2); sfxSynth.triggerAttackRelease("C6", "8n", now + 0.4); };
         const gameOverSound = () => { const now = Tone.now(); sfxSynth.triggerAttackRelease("C4", "8n", now); sfxSynth.triggerAttackRelease("G3", "8n", now + 0.2); sfxSynth.triggerAttackRelease("E3", "8n", now + 0.4); };
 
         function showDiscoveryPopup(level) {
-            const item = ITEMS[level];
-            if (!item) return;
+            const emotion = EMOTIONS[level];
+            if (!emotion) return;
             disableAction = true; Runner.stop(runner); if (isAudioStarted) Tone.Transport.pause();
-            popupEmoji.textContent = item.emoji; popupName.textContent = item.name; popupDescription.textContent = item.description;
+            popupImage.src = emotion.image; popupName.textContent = emotion.name; popupDescription.textContent = emotion.description;
             discoveryPopup.classList.remove('hidden'); discoverySound();
         }
         function showGameCompletePopup() {
@@ -161,66 +157,61 @@
         }
         popupCloseButton.addEventListener('click', () => {
             discoveryPopup.classList.add('hidden'); Runner.run(runner, engine); if (isAudioStarted) Tone.Transport.start();
-            setTimeout(() => { if (!isGameOver) { spawnCurrentItem(); disableAction = false; } }, 100); 
+            setTimeout(() => { if (!isGameOver) { spawnCurrentEmotion(); disableAction = false; } }, 100);
         });
         completePopupCloseButton.addEventListener('click', () => {
-             gameCompletePopup.classList.add('hidden'); Runner.run(runner, engine); if (isAudioStarted) Tone.Transport.start();
-             setTimeout(() => { if (!isGameOver) { spawnCurrentItem(); disableAction = false; } }, 100);
+            gameCompletePopup.classList.add('hidden'); Runner.run(runner, engine); if (isAudioStarted) Tone.Transport.start();
+            setTimeout(() => { if (!isGameOver) { spawnCurrentEmotion(); disableAction = false; } }, 100);
         });
 
         function init() {
             containerWidth = gameContainer.clientWidth; containerHeight = gameContainer.clientHeight;
-            ITEMS = [
-                { level: 0, name: '도토리', radius: containerWidth * 0.08, score: 1, emoji: '🌰', color: '#8b5e3c', description: '작고 귀여운 도토리. 농장의 첫 시작이예요!' },
-                { level: 1, name: '닭', radius: containerWidth * 0.12, score: 3, emoji: '🐔', color: '#ffb56b', description: '꼬꼬댁! 도토리 두 개가 합쳐져서 닭이 되었어요.' },
-                { level: 2, name: '소', radius: containerWidth * 0.15, score: 6, emoji: '🐄', color: '#f5f5f5', description: '음메-! 닭 두 마리가 합쳐지면 튼튼한 소가 됩니다.' },
-                { level: 3, name: '집', radius: containerWidth * 0.2, score: 10, emoji: '🏠', color: '#c29b7a', description: '축하해요! 소 두 마리가 모여서 멋진 집을 지었어요!' }
-            ];
+            EMOTIONS = [ { level: 0, name: '슬픔', radius: containerWidth * 0.08, score: 1, image: 'https://i.ibb.co/L5T47yN/1.jpg', color: '#B2EBF2', description: '눈물이 주룩주룩... 마음이 울적할 때 나타나는 감정이에요.' }, { level: 1, name: '놀람', radius: containerWidth * 0.1, score: 3, image: 'https://i.ibb.co/3mS7h9S/2.jpg', color: '#C5CAE9', description: '깜짝이야! 예상치 못한 일이 일어났을 때 눈이 동그래져요.' }, { level: 2, name: '졸림', radius: containerWidth * 0.12, score: 6, image: 'https://i.ibb.co/LgB6L98/3.jpg', color: '#F0F4C3', description: '스르륵... 눈이 감기고 하품이 나올 때 느껴지는 감정이에요.' }, { level: 3, name: '기대', radius: containerWidth * 0.15, score: 10, image: 'https://i.ibb.co/v34wT9j/4.jpg', color: '#FFECB3', description: '반짝반짝! 즐거운 일이 곧 일어날 것 같을 때 설레는 마음이에요.' }, { level: 4, name: '기쁨', radius: containerWidth * 0.18, score: 15, image: 'https://i.ibb.co/zXn29jS/5.jpg', color: '#FFCDD2', description: '활짝 웃음꽃이 피어나는 최고의 감정이에요!' }];
             if (engine) World.clear(engine.world, false); if (render) Render.stop(render); if (runner) Runner.stop(runner); if (render && render.canvas) render.canvas.remove();
-            bodiesToRemove.clear(); bodiesToAdd = []; isFirstItem = true;
+            bodiesToRemove.clear(); bodiesToAdd = []; isFirstEmotion = true;
             engine = Engine.create(); engine.world.gravity.y = 1;
             render = Render.create({ element: gameContainer, engine: engine, options: { width: containerWidth, height: containerHeight, wireframes: false, background: 'transparent' } });
             runner = Runner.create(); Runner.run(runner, engine); Render.run(render, engine);
             currentScore = 0; isGameOver = false; disableAction = false; updateScores(); gameOverModal.classList.add('hidden');
-            createBoundaries(); prepareNextItem(); spawnCurrentItem(); setupEventListeners();
+            createBoundaries(); prepareNextEmotion(); spawnCurrentEmotion(); setupEventListeners();
             if (isAudioStarted) Tone.Transport.start();
         }
         function createBoundaries() {
-            const wallOptions = { isStatic: true, render: { fillStyle: '#34d399' } };
+            const wallOptions = { isStatic: true, render: { fillStyle: '#e99499' } };
             World.add(engine.world, [ Bodies.rectangle(containerWidth / 2, containerHeight, containerWidth, 50, wallOptions), Bodies.rectangle(10, containerHeight / 2, 20, containerHeight, wallOptions), Bodies.rectangle(containerWidth - 10, containerHeight / 2, 20, containerHeight, wallOptions) ]);
         }
-        function addItem(x, y, level) {
+        function addEmotion(x, y, level) {
             if (level > MAX_LEVEL) return null;
-            const itemInfo = ITEMS[level];
-            const item = Bodies.circle(x, y, itemInfo.radius, { label: `item_${level}`, restitution: 0.3, friction: 0.5, render: { fillStyle: itemInfo.color } });
-            if (!discoveredItems.includes(level)) {
-                discoveredItems.push(level); localStorage.setItem('discoveredItems', JSON.stringify(discoveredItems));
+            const emotionInfo = EMOTIONS[level];
+            const emotion = Bodies.circle(x, y, emotionInfo.radius, { label: `emotion_${level}`, restitution: 0.3, friction: 0.5, render: { sprite: { texture: emotionInfo.image, xScale: emotionInfo.radius * 2 / 512, yScale: emotionInfo.radius * 2 / 512 } } });
+            if (!discoveredEmotions.includes(level)) {
+                discoveredEmotions.push(level); localStorage.setItem('discoveredEmotions', JSON.stringify(discoveredEmotions));
                 if (level === MAX_LEVEL) { showGameCompletePopup(); } else { showDiscoveryPopup(level); }
             }
-            World.add(engine.world, item); return item;
+            World.add(engine.world, emotion); return emotion;
         }
-        function prepareNextItem() {
-            let spawnableLevels = discoveredItems.filter(level => level <= MAX_SPAWN_LEVEL); if (spawnableLevels.length === 0) spawnableLevels = [0];
-            const randomLevel = isFirstItem ? 0 : spawnableLevels[Math.floor(Math.random() * spawnableLevels.length)];
-            nextItemInfo = ITEMS[randomLevel]; nextItemEmojiEl.textContent = nextItemInfo.emoji; nextItemEmojiEl.style.fontSize = `${containerWidth * 0.05 * 1.5}px`;
+        function prepareNextEmotion() {
+            let spawnableLevels = discoveredEmotions.filter(level => level <= MAX_SPAWN_LEVEL); if (spawnableLevels.length === 0) spawnableLevels = [0];
+            const randomLevel = isFirstEmotion ? 0 : spawnableLevels[Math.floor(Math.random() * spawnableLevels.length)];
+            nextEmotionInfo = EMOTIONS[randomLevel]; nextEmotionImageEl.src = nextEmotionInfo.image;
         }
-        function spawnCurrentItem() {
-            if (isGameOver || currentItem) return; 
-            currentItem = addItem(containerWidth / 2, 50, nextItemInfo.level); if(currentItem) Body.setStatic(currentItem, true); prepareNextItem();
+        function spawnCurrentEmotion() {
+            if (isGameOver || currentEmotion) return;
+            currentEmotion = addEmotion(containerWidth / 2, 50, nextEmotionInfo.level); if(currentEmotion) Body.setStatic(currentEmotion, true); prepareNextEmotion();
         }
         function setupEventListeners() {
             const handleMove = (e) => {
-                if (!currentItem || isGameOver || disableAction) return; e.preventDefault();
+                if (!currentEmotion || isGameOver || disableAction) return; e.preventDefault();
                 let x = e.offsetX; if (e.touches) x = e.touches[0].clientX - gameContainer.getBoundingClientRect().left;
-                const radius = ITEMS[parseInt(currentItem.label.split('_')[1])].radius; const clampedX = Common.clamp(x, radius + 10, containerWidth - radius - 10);
-                Body.setPosition(currentItem, { x: clampedX, y: currentItem.position.y });
+                const radius = EMOTIONS[parseInt(currentEmotion.label.split('_')[1])].radius; const clampedX = Common.clamp(x, radius + 10, containerWidth - radius - 10);
+                Body.setPosition(currentEmotion, { x: clampedX, y: currentEmotion.position.y });
             };
             const handleDrop = async () => {
-                if (!currentItem || isGameOver || disableAction) return;
+                if (!currentEmotion || isGameOver || disableAction) return;
                 if (!isAudioStarted) { await Tone.start(); Tone.Transport.start(); isAudioStarted = true; }
-                Body.setStatic(currentItem, false); dropSound(); if (isFirstItem) isFirstItem = false;
-                disableAction = true; currentItem = null;
-                setTimeout(() => { if (discoveryPopup.classList.contains('hidden') && gameCompletePopup.classList.contains('hidden')) { spawnCurrentItem(); disableAction = false; } }, 800);
+                Body.setStatic(currentEmotion, false); dropSound(); if (isFirstEmotion) isFirstEmotion = false;
+                disableAction = true; currentEmotion = null;
+                setTimeout(() => { if (discoveryPopup.classList.contains('hidden') && gameCompletePopup.classList.contains('hidden')) { spawnCurrentEmotion(); disableAction = false; } }, 800);
             };
             gameContainer.addEventListener('mousemove', handleMove); gameContainer.addEventListener('touchmove', handleMove, { passive: false }); gameContainer.addEventListener('mousedown', handleDrop); gameContainer.addEventListener('touchend', handleDrop);
             Events.on(engine, 'collisionStart', handleCollision); Events.on(engine, 'afterUpdate', processDeferredActions); Events.on(render, 'afterRender', afterRender);
@@ -228,15 +219,15 @@
         function processDeferredActions() {
             if(isGameOver) return;
             if (bodiesToRemove.size > 0) { bodiesToRemove.forEach(body => World.remove(engine.world, body)); bodiesToRemove.clear(); }
-            if (bodiesToAdd.length > 0) { bodiesToAdd.forEach(data => addItem(data.x, data.y, data.level)); bodiesToAdd = []; }
+            if (bodiesToAdd.length > 0) { bodiesToAdd.forEach(data => addEmotion(data.x, data.y, data.level)); bodiesToAdd = []; }
         }
         let gameOverCheckTimeout = null;
         function afterRender() {
             const bodies = Composite.allBodies(engine.world); const context = render.context; let isAboveLine = false;
             bodies.forEach(body => {
-                if (body.label && body.label.startsWith('item_')) {
-                    const level = parseInt(body.label.split('_')[1]); const itemInfo = ITEMS[level];
-                    context.font = `${itemInfo.radius * 1.5}px Jua`; context.textAlign = "center"; context.textBaseline = "middle"; context.fillStyle = '#000000'; context.fillText(itemInfo.emoji, body.position.x, body.position.y);
+                if (body.label && body.label.startsWith('emotion_')) {
+                    const level = parseInt(body.label.split('_')[1]); const emotionInfo = EMOTIONS[level];
+                    // 기존 텍스트 렌더링 방식 대신 스프라이트 사용
                     if (!body.isStatic && body.position.y - body.circleRadius < 100) { isAboveLine = true; }
                 }
             });
@@ -245,7 +236,7 @@
                 if (!gameOverCheckTimeout) {
                     gameOverCheckTimeout = setTimeout(() => {
                         const bodiesNow = Composite.allBodies(engine.world); let stillAbove = false;
-                        bodiesNow.forEach(body => { if (body.label && body.label.startsWith('item_') && !body.isStatic && body.position.y - body.circleRadius < 100) { stillAbove = true; } });
+                        bodiesNow.forEach(body => { if (body.label && body.label.startsWith('emotion_') && !body.isStatic && body.position.y - body.circleRadius < 100) { stillAbove = true; } });
                         if (stillAbove) triggerGameOver();
                         gameOverCheckTimeout = null;
                     }, 1000);
@@ -257,11 +248,11 @@
             for (const pair of pairs) {
                 const { bodyA, bodyB } = pair;
                 if (!bodyA.label || !bodyB.label || bodiesToRemove.has(bodyA) || bodiesToRemove.has(bodyB)) continue;
-                if (bodyA.label === bodyB.label && bodyA.label.startsWith('item_')) {
+                if (bodyA.label === bodyB.label && bodyA.label.startsWith('emotion_')) {
                     const level = parseInt(bodyA.label.split('_')[1]); if (level >= MAX_LEVEL) continue;
                     bodiesToRemove.add(bodyA); bodiesToRemove.add(bodyB);
                     bodiesToAdd.push({ x: (bodyA.position.x + bodyB.position.x) / 2, y: (bodyA.position.y + bodyB.position.y) / 2, level: level + 1 });
-                    currentScore += ITEMS[level].score; updateScores(); mergeSound(level + 1);
+                    currentScore += EMOTIONS[level].score; updateScores(); mergeSound(level + 1);
                 }
             }
         }
@@ -330,7 +321,7 @@
             updatedQuerySnapshot.forEach((doc) => {
                 updatedLeaderboard.push({ id: doc.id, ...doc.data() });
             });
-            showLeaderboard(updatedLeaderboard, auth.currentUser.uid + score); // Temporary ID for highlighting
+            showLeaderboard(updatedLeaderboard, auth.currentUser.uid + score); // 현재 플레이어 강조를 위한 임시 ID
         }
 
         function showLeaderboard(leaderboard, highlightId = null) {
@@ -354,14 +345,14 @@
         function updateScores() {
             currentScoreEl.textContent = currentScore;
             if (currentScore > highScore) {
-                highScore = currentScore; localStorage.setItem('acorn-farm-highscore', highScore);
+                highScore = currentScore; localStorage.setItem('emotion-highscore', highScore);
             }
             highScoreEl.textContent = highScore;
         }
         
         window.addEventListener('resize', () => { clearTimeout(window.resizeTimeout); window.resizeTimeout = setTimeout(init, 250); });
         
-        // Start game with Firebase setup
+        // Firebase 설정으로 게임 시작
         setupFirebase();
     </script>
 </body>
